@@ -55,7 +55,7 @@ def inject_cname(app):
                         mimetype='application/octet-stream')
 
 
-def cli(app, *, freezer=None, base_url=None):
+def cli(app, *, freezer=None, base_url=None, invoke_cli=True):
     """Get a cli() function for provided app"""
     if not freezer:
         freezer = ShutdownableFreezer(app)
@@ -139,4 +139,7 @@ def cli(app, *, freezer=None, base_url=None):
 
         deploy_(path, remote=remote, push=push, show_err=show_git_push_stderr)
 
-    return command()
+    if invoke_cli:
+        return command()
+    else:
+        return command
