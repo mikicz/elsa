@@ -58,7 +58,7 @@ def inject_cname(app):
 def cli(app, *, freezer=None, base_url=None, invoke_cli=True):
     """ Generates command-line interface for the provided app.
 
-    If ``invoke_cli`` is set to ``True`` (the dafulat),
+    If ``invoke_cli`` is set to ``True`` (the default),
     the cli is invoked right away,
     otherwise it's returned so it can be used further.
     """
