@@ -73,20 +73,21 @@ class ElsaRunner:
     If there is a local website.py in pwd, uses that one,
     uses the one from fixtures instead.
     '''
-    def run(self, *command, script=None, should_fail=False,
-            subprocess_kwargs=None):
+    def run(self, *command, script=None, should_fail=False):
         print('COMMAND: python website.py', *command)
         try:
             cr = subprocess.run(
                 self.create_command(command, script), check=not should_fail,
-                stderr=subprocess.PIPE,
-                **(subprocess_kwargs or {})
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
             )
         except subprocess.CalledProcessError as e:
             raise CommandFailed('return code was {}'.format(e.returncode))
         if should_fail and cr.returncode == 0:
             raise CommandNotFailed('return code was 0')
+        cr.stdout = cr.stdout.decode('utf-8')
         cr.stderr = cr.stderr.decode('utf-8')
+        sys.stdout.write(cr.stdout)
         sys.stderr.write(cr.stderr)
         return cr
 
@@ -470,7 +471,6 @@ def test_invoke_cli(elsa):
     with open(INDEX_FIXTURES) as f:
         assert 'SUCCESS' in f.read()
 
-    result = elsa.run('custom_command', script='custom_command.py',
-                      subprocess_kwargs={"stdout": subprocess.PIPE})
+    result = elsa.run('custom_command', script='custom_command.py')
 
-    assert result.stdout.decode("utf-8").strip() == 'Custom command'
+    assert result.stdout.strip() == 'Custom command'
