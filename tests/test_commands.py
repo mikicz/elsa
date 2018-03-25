@@ -79,7 +79,7 @@ class ElsaRunner:
             cr = subprocess.run(
                 self.create_command(command, script), check=not should_fail,
                 stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE)
+                stderr=subprocess.PIPE,
             )
         except subprocess.CalledProcessError as e:
             raise CommandFailed('return code was {}'.format(e.returncode))
