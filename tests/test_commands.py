@@ -73,12 +73,14 @@ class ElsaRunner:
     If there is a local website.py in pwd, uses that one,
     uses the one from fixtures instead.
     '''
-    def run(self, *command, script=None, should_fail=False):
+    def run(self, *command, script=None, should_fail=False,
+            subprocess_kwargs=None):
         print('COMMAND: python website.py', *command)
         try:
             cr = subprocess.run(
                 self.create_command(command, script), check=not should_fail,
-                stderr=subprocess.PIPE
+                stderr=subprocess.PIPE,
+                **(subprocess_kwargs or {})
             )
         except subprocess.CalledProcessError as e:
             raise CommandFailed('return code was {}'.format(e.returncode))
@@ -461,3 +463,14 @@ def test_deploy_different_remote(elsa, push, gitrepo):
     elsa.run('deploy', push, '--remote', 'foo')
     assert 'SUCCESS' in commit_info()
     assert is_true(push) == was_pushed(remote=remote)
+
+
+def test_invoke_cli(elsa):
+    elsa.run('freeze', script='custom_command.py')
+    with open(INDEX_FIXTURES) as f:
+        assert 'SUCCESS' in f.read()
+
+    result = elsa.run('custom_command', script='custom_command.py',
+                      subprocess_kwargs={"stdout": subprocess.PIPE})
+
+    assert result.stdout.decode("utf-8").strip() == 'Custom command'
