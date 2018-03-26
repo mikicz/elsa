@@ -6,8 +6,8 @@ Changes
 
 * Add ``invoke_cli`` option for the ``cli`` function.
   If set to ``False``, it only returns the cli for further extending. (`#45`_)
-* Not removing remote tracking branch if --no-push is used (fixes `#41`_)
-* Improved handling of ``FrozenFlaskWarning`` (`#37`_)
+* Don't remove the remote tracking branch when ``--no-push`` is used (fixes `#41`_)
+* Improve handling of ``FrozenFlaskWarning`` (`#37`_)
 * Add the ``--show-git-push-stderr`` option to make deploy more verbose,
   this can help debug problems, but is potentially dangerous, hence the output
   of ``git push`` is hidden by default. (`#37`_)
